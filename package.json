@@ -1,0 +1,16 @@
+{
+  "name": "adc-playwright-practice-lab",
+  "version": "1.0.0",
+  "description": "Exercices Playwright « avant / après » : repérer les défauts d'un test, puis lire la correction.",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "app": "node app/server.js",
+    "test": "playwright test",
+    "avant": "playwright test exercises",
+    "apres": "playwright test solutions"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0"
+  }
+}

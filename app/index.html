@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Boutique de démonstration</title>
+  <style>body{font-family:system-ui,sans-serif;max-width:32rem;margin:2rem auto;padding:0 1rem}li{margin:.5rem 0}.erreur{color:#b00020}</style>
+</head>
+<body>
+  <h1>Boutique de démonstration</h1>
+  <p id="chargement">Chargement des produits…</p>
+  <ul id="produits" hidden></ul>
+  <h2>Panier</h2>
+  <ul id="panier"></ul>
+  <label for="code">Code promo</label>
+  <input id="code" type="text">
+  <button type="button" id="appliquer">Appliquer</button>
+  <p id="message-code" role="status"></p>
+  <p>Total : <strong id="total">0,00 €</strong></p>
+  <button type="button" id="valider">Valider la commande</button>
+  <p id="confirmation" role="status"></p>
+<script>
+  let remiseActive = true, remise = 0;
+  const panier = [];
+  const euros = (n) => n.toFixed(2).replace('.', ',') + ' €';
+
+  function afficherPanier() {
+    const sousTotal = panier.reduce((s, p) => s + p.prix, 0);
+    document.getElementById('panier').innerHTML = panier.map((p) => `<li>${p.nom} — ${euros(p.prix)}</li>`).join('');
+    document.getElementById('total').textContent = euros(sousTotal * (1 - remise));
+  }
+
+  fetch('/api/produits').then((r) => r.json()).then((d) => {
+    remiseActive = d.remiseActive;
+    const ul = document.getElementById('produits');
+    ul.innerHTML = d.produits.map((p) =>
+      `<li>${p.nom} — ${euros(p.prix)} <button type="button" data-id="${p.id}" aria-label="Ajouter ${p.nom} au panier">Ajouter au panier</button></li>`).join('');
+    ul.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => {
+      panier.push(d.produits.find((p) => p.id === b.dataset.id));
+      afficherPanier();
+    }));
+    document.getElementById('chargement').hidden = true;
+    ul.hidden = false;
+  });
+
+  document.getElementById('appliquer').addEventListener('click', () => {
+    const msg = document.getElementById('message-code');
+    if (document.getElementById('code').value.trim() === 'ADC10') {
+      remise = remiseActive ? 0.1 : 0;
+      msg.className = ''; msg.textContent = 'Code appliqué.';
+    } else {
+      remise = 0;
+      msg.className = 'erreur'; msg.textContent = 'Code invalide.';
+    }
+    afficherPanier();
+  });
+
+  document.getElementById('valider').addEventListener('click', () => {
+    document.getElementById('confirmation').textContent = panier.length ? 'Commande validée.' : 'Le panier est vide.';
+  });
+</script>
+</body>
+</html>
