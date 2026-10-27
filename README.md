@@ -1,5 +1,7 @@
 # Playwright Practice Lab
 
+[English version](README.en.md)
+
 Trois exercices « avant / après » pour apprendre à relire un test Playwright : le test d'origine passe, votre travail est de dire ce qu'il ne prouve pas, puis de le corriger.
 
 | # | Sujet | Ce que vous apprenez |
